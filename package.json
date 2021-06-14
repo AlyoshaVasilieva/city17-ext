@@ -1,0 +1,26 @@
+{
+  "name": "city17",
+  "version": "0.5.5",
+  "description": "i'm just using npm to build who cares",
+  "main": "background.js",
+  "author": "Malloc Voidstar",
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-typescript": "^8.2.1",
+    "@types/chrome": "^0.0.141",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
+    "eslint": "^7.27.0",
+    "rollup": "^2.51.0",
+    "rollup-plugin-chrome-extension": "^3.5.7",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "bulma-toast": "^2.3.1"
+  }
+}

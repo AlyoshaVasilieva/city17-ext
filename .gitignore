@@ -1,0 +1,10 @@
+dist/
+src_proc/
+node_modules/
+build_set_env_vars.ps1
+build_set_env_vars.sh
+.idea/**/workspace.xml
+.idea/**/misc.xml
+.idea/**/modules.xml
+.idea/**/city17-ext.iml
+.idea/**/dataSources.local.xml
