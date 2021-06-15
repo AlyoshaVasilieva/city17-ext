@@ -1,9 +1,8 @@
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript';
 
-import {
-    chromeExtension,
-} from 'rollup-plugin-chrome-extension'
+import {chromeExtension} from 'rollup-plugin-chrome-extension'
+import del from 'rollup-plugin-delete'
 
 export default {
     input: 'src_proc/manifest.json',
@@ -15,5 +14,6 @@ export default {
         chromeExtension(),
         typescript(),
         resolve(),
+        del({targets: 'dist/*'}),
     ],
 }
