@@ -11,7 +11,7 @@ export default {
         format: 'esm',
     },
     plugins: [
-        chromeExtension(),
+        chromeExtension({browserPolyfill: true}),
         typescript(),
         resolve(),
         del({targets: 'dist/*'}),

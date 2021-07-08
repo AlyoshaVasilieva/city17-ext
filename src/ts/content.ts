@@ -1,6 +1,6 @@
 import {toast} from "bulma-toast";
 
-chrome.runtime.onMessage.addListener((err) => {
+browser.runtime.onMessage.addListener((err) => {
     const type = err.maybeFake ? "is-warning" : "is-danger";
     const duration = err.maybeFake ? 5000 : 10000;
     toast({

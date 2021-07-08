@@ -1,15 +1,15 @@
 "use strict";
 
-import BlockingResponse = chrome.webRequest.BlockingResponse;
-import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
+import BlockingResponse = browser.webRequest.BlockingResponse;
+import WebRequestBodyDetails = browser.webRequest._OnBeforeRequestDetails;
 
-chrome.webRequest.onBeforeRequest.addListener(
+browser.webRequest.onBeforeRequest.addListener(
     redirectM3U,
     {urls: ["https://usher.ttvnw.net/api/channel/hls/*", "https://usher.ttvnw.net/vod/*"]},
     ["blocking"]
 );
 
-chrome.webRequest.onBeforeRequest.addListener(
+browser.webRequest.onBeforeRequest.addListener(
     blockAdServer,
     {urls: ["https://*.amazon-adsystem.com/*"]},
     ["blocking"]
@@ -27,6 +27,9 @@ function blockAdServer(details: WebRequestBodyDetails): BlockingResponse | void 
     };
 }
 
+/** Tell TypeScript about a legacy Firefox API. */
+declare const InstallTrigger: void;
+
 /** Attempt to grab the M3U8 from the relay function, triggering a redirect to a data URL if successful. */
 function redirectM3U(details: WebRequestBodyDetails): BlockingResponse | void {
     const base = "FUNCTION_URL_BASE";
@@ -39,14 +42,18 @@ function redirectM3U(details: WebRequestBodyDetails): BlockingResponse | void {
     const type = source[1];
     const endpoint = type === "hls" ? "/live/" : "/vod/";
     const id = source[2];
-    const req = new XMLHttpRequest();
-    // req.timeout = 11000; // only available for async requests
-    // A misconfigured Azure function will, by default, hang for 5 minutes instead of giving an error.
-    // But async isn't allowed in Chrome. Set timeout on Azure side to something lower.
-    // Aliyun has a default 60s timeout, it shouldn't need more than ~15s worst case. (Max I've seen is ~10s)
     const url = `${base}${endpoint}${id}`;
+    if (typeof InstallTrigger !== 'undefined') {
+        // Firefox blocks redirecting to a data URL, citing CORS.
+        // I'm pretty sure this is a bug, but I've tried reporting bugs to them before.
+        // Skip all the nice error presentation and just go for it.
+        // If the function fails, Twitch's player will retry a bit before error 2000.
+        console.log(`redirecting ${type} ${id}`);
+        return {redirectUrl: url};
+    }
+    const req = new XMLHttpRequest();
     console.log(`calling ${url}`);
-    // Ignore the deprecation warning, there is no replacement.
+    // Ignore the deprecation warning.
     req.open("GET", url, false);
     req.send();
     if (req.status !== 200 || !req.response.startsWith("#EXTM3U")) {
@@ -58,9 +65,7 @@ function redirectM3U(details: WebRequestBodyDetails): BlockingResponse | void {
 
     const m3u8 = stringToBase64(req.response);
     console.log(`redirecting ${type} ${id}`);
-    return {
-        redirectUrl: `data:application/vnd.apple.mpegurl;base64,${m3u8}`
-    }
+    return {redirectUrl: `data:application/vnd.apple.mpegurl;base64,${m3u8}`};
 }
 
 /** Log an error with a (hopefully) detailed message, both to the console and a toast notification. */
@@ -99,12 +104,15 @@ export interface ExtError {
 
 /** Send an error to the content script for display. */
 function sendError(err: ExtError) {
-    chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-        if (tabs.length === 0 || typeof tabs[0].id === "undefined") {
-            return;
-        }
-        chrome.tabs.sendMessage(tabs[0].id, err);
-    });
+    browser.tabs.query({active: true, currentWindow: true})
+        .then(tabs => {
+            if (tabs.length === 0 || typeof tabs[0].id === "undefined") {
+                return;
+            }
+            return browser.tabs.sendMessage(tabs[0].id, err);
+        }, e => {
+            console.log(`failed to send error due to ${e}`);
+        });
 }
 
 /** Converts a string to a base64 string. Safe for use with Unicode input, unlike {@link btoa}.
