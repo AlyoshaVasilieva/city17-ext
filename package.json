@@ -1,6 +1,6 @@
 {
   "name": "city17",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "i'm just using npm to build who cares",
   "main": "background.js",
   "author": "Malloc Voidstar",
@@ -12,6 +12,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/chrome": "~0.0",
+    "@types/firefox-webext-browser": ">=82.0",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "eslint": "^7.27.0",
