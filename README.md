@@ -8,7 +8,7 @@ This isn't provided pre-built, you need to set it all up yourself.
 
 ### Building
 
-Prerequisite: Set up City17 and ensure [you have NPM installed](https://www.npmjs.com/get-npm).
+Prerequisite: Set up City17 and ensure [you have Node and NPM installed*][npm].
 
 The build process is somewhat weird in order to avoid publishing my function URLs,
 since that would eventually cost me money.
@@ -25,6 +25,11 @@ $Env:FUNCTION_PERM_REGEX="https://################.cn-shanghai.fc.aliyuncs.com/*
 
 The Powershell build process should be fairly easy to port to Linux. (It should likely
 just be using NPM somehow, but I don't know how to use NPM.)
+
+*: That link is the fast way. [Read this guide for the correct way][guide].
+
+[guide]: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+[npm]: https://nodejs.org/en/
 
 ### Issues
 
